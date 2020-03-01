@@ -6,21 +6,30 @@
         <img src="../assets/logo.png" alt />
       </div>
       <!-- 登录表单区域 -->
-      <el-form ref="loginFormRef" :model=" loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="loginFormRules"
+        label-width="0px"
+        class="login_form"
+      >
         <!-- 用户名 -->
         <el-form-item prop="username">
-          <el-input v-model=" loginForm.username" prefix-icon="iconfont icon-user"></el-input>
-        </el-form-item >
+          <el-input
+            v-model="loginForm.username"
+            prefix-icon="iconfont icon-user"
+          ></el-input>
+        </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
           <el-input
-            v-model=" loginForm.password"
+            v-model="loginForm.password"
             prefix-icon="iconfont icon-3702mima"
             type="password"
           ></el-input>
         </el-form-item>
         <el-form-item class="btns">
-          <el-button type="primary">登录</el-button>
+          <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -30,12 +39,12 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       // 返回的实例数据对象
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       // 这是表单的验证规则对象
       loginFormRules: {
@@ -52,8 +61,19 @@ export default {
   },
   methods: {
     // 点击重置按钮，重置登录表单
-    resetLoginForm () {
+    resetLoginForm() {
       this.$refs.loginFormRef.resetFields()
+    },
+    login() {
+      this.$refs.loginFormRef.validate(async valid => {
+        if (!valid) return
+        const { data: res } = await this.$http.post('login', this.loginForm)
+        if (res.meta.status !== 200) return this.$message.error('登录失败')
+        this.$message.success('登录成功')
+        console.log(res)
+        window.sessionStorage.setItem('token', res.data.token)
+        this.$router.push('/home')
+      })
     }
   }
 }
