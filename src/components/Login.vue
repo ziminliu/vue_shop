@@ -6,16 +6,19 @@
         <img src="../assets/logo.png" alt />
       </div>
       <!-- 登录表单区域 -->
-      <el-form label-width="0px" class="login_form">
+      <el-form :model=" loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
         <!-- 用户名 -->
-        <el-form-item >
-          <el-input prefix-icon="iconfont icon-user"></el-input>
-        </el-form-item>
+        <el-form-item prop="username">
+          <el-input v-model=" loginForm.username" prefix-icon="iconfont icon-user"></el-input>
+        </el-form-item >
         <!-- 密码 -->
-        <el-form-item >
-          <el-input prefix-icon="iconfont icon-3702mima"></el-input>
+        <el-form-item prop="password">
+          <el-input
+            v-model=" loginForm.password"
+            prefix-icon="iconfont icon-3702mima"
+            type="password"
+          ></el-input>
         </el-form-item>
-
         <el-form-item class="btns">
           <el-button type="primary">登录</el-button>
           <el-button type="primary">重置</el-button>
@@ -26,7 +29,28 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {
+      // 返回的实例数据对象
+      loginForm: {
+        username: '',
+        password: ''
+      },
+      // 这是表单的验证规则对象
+      loginFormRules: {
+        username: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在3-10个字符之间', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 12, message: '长度在6-12个字符之间', trigger: 'blur' }
+        ]
+      }
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -62,14 +86,14 @@ export default {}
     }
   }
 }
-.login_form{
+.login_form {
   position: absolute;
   bottom: 0;
-  width:100%;
+  width: 100%;
   padding: 0 20px;
   box-sizing: border-box;
 }
-.btns{
+.btns {
   display: flex;
   justify-content: flex-end;
 }
