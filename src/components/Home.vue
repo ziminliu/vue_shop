@@ -21,6 +21,7 @@
           :collapse="isCollapse"
           :collapse-transition="false"
           :router="true"
+          :default-active="this.$route.path"
         >
           <!-- 一级菜单 -->
           <el-submenu
@@ -56,6 +57,7 @@
 </template>
 <script>
 export default {
+  props: ['path'],
   data() {
     return {
       menulist: [],
@@ -87,6 +89,9 @@ export default {
     // 点击按钮切换菜单的折叠与展开
     toggleCollapse() {
       this.isCollapse = !this.isCollapse
+    },
+    savePath() {
+      console.log(this.$props)
     }
   }
 }
