@@ -30,7 +30,10 @@
         <el-table-column label="角色" prop="role_name"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.mg_state"></el-switch>
+            <el-switch
+              v-model="scope.row.mg_state"
+              @change="userStateChanged(scope.row)"
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180px">
@@ -59,6 +62,18 @@
           </template>
         </el-table-column>
       </el-table>
+
+      <!-- 分页区域 -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pagenum"
+        :page-sizes="[1, 2, 5, 10]"
+        :page-size="queryInfo.pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      >
+      </el-pagination>
     </el-card>
   </div>
 </template>
@@ -74,7 +89,7 @@ export default {
         pagesize: 2
       },
       userList: [],
-      total: ''
+      total: 0
     }
   },
   created() {
@@ -91,6 +106,28 @@ export default {
       ;[this.userList, this.total] = [res.data.users, res.data.total]
       // console.log(res)
       // console.log(this.userList, this.total)
+    },
+    // 监听pagesize 改变的事件
+    handleSizeChange(newSize) {
+      this.queryInfo.pagesize = newSize
+      this.getUserList()
+    },
+    // 监听页码值改变事件
+    handleCurrentChange(newPage) {
+      this.queryInfo.pagenum = newPage
+      this.getUserList()
+    },
+    // 监听switch开关的状态改变
+    async userStateChanged(userinfo) {
+      // console.log(userinfo)
+      const { data: res } = await this.$http.put(
+        `users/${userinfo.id}/state/${userinfo.mg_state}`
+      )
+      if (res.meta.status !== 200) {
+        userinfo.mg_state = !userinfo.mg_state
+        return this.$message.error('更新状态失败')
+      }
+      this.$message.success('更新状态成功')
     }
   }
 }
